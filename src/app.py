@@ -263,29 +263,30 @@ def display_book_grid(books_list):
                     """
                     st.markdown(card_html, unsafe_allow_html=True)
 
-tab1, tab2 = st.tabs(["Beginner Learning Paths", "Similar Book Finder"])
+# tab1, tab2 = st.tabs(["Beginner Learning Paths", "Similar Book Finder"])
+tab2 = st.tabs(["Similar Book Finder"])
 
-with tab1:
-    st.markdown("### Pick a Coding Track to Start Programming")
+# with tab1:
+#     st.markdown("### Pick a Coding Track to Start Programming")
 
-    path_options = {
-        "Software Engineering & Clean Architecture": 0,
-        "Web Development (HTML, CSS, Frontend)": 1,
-        "Python & Systems Programming": 2,
-        "JavaScript & Modern Scripting": 4,
-        "Computer Science Foundations & Algorithms": 6,
-        "Java & JVM Enterprise Development": 8,
-        "Object-Oriented Design & OOP Patterns": 9
-    }
+#     path_options = {
+#         "Software Engineering & Clean Architecture": 0,
+#         "Web Development (HTML, CSS, Frontend)": 1,
+#         "Python & Systems Programming": 2,
+#         "JavaScript & Modern Scripting": 4,
+#         "Computer Science Foundations & Algorithms": 6,
+#         "Java & JVM Enterprise Development": 8,
+#         "Object-Oriented Design & OOP Patterns": 9
+#     }
 
-    selected_path = st.selectbox("Select your starting track:", list(path_options.keys()))
-    cluster_id = path_options[selected_path]
+#     selected_path = st.selectbox("Select your starting track:", list(path_options.keys()))
+#     cluster_id = path_options[selected_path]
 
-    raw_recs = get_cluster_recommendations(cluster_id, num_recommendations=25)
-    filtered_recs = apply_filters(raw_recs)[:num_recommendations]
+#     raw_recs = get_cluster_recommendations(cluster_id, num_recommendations=25)
+#     filtered_recs = apply_filters(raw_recs)[:num_recommendations]
 
-    st.markdown(f"#### Top Recommendations for **{selected_path}**")
-    display_book_grid(filtered_recs)
+#     st.markdown(f"#### Top Recommendations for **{selected_path}**")
+#     display_book_grid(filtered_recs)
 
 with tab2:
     st.markdown("### Find Similar Books")
