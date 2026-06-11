@@ -31,6 +31,87 @@ def clean_data():
 
     df_combined = df_combined.drop(columns=['norm_title', 'norm_author'])
 
+    # Relevance filtering: remove non-programming/non-CS books
+    import re
+    
+    positive_keywords = [
+        'programming', 'programmer', 'program', 'code', 'coding', 'software', 'computer science', 
+        'developer', 'develop', 'web dev', 'frontend', 'backend', 'algorithm', 'database', 
+        'data structures', 'hacker', 'devops', 'refactoring', 'microservices', 'agile', 'scrum', 
+        'git', 'github', 'docker', 'kubernetes', 'cloud computing', 'system design', 
+        'software architecture', 'clean code', 'machine learning', 'artificial intelligence', 
+        'neural network', 'data science', 'deep learning', 'design patterns', 'compilers', 
+        'operating systems', 'networks', 'cryptography', 'web development', 'unix', 'linux', 
+        'information technology', 'devsecops', 'object-oriented', 'oop', 'computer programming', 
+        'lisp', 'python', 'javascript', 'java', 'c++', 'c#', 'rust', 'golang', 'typescript', 
+        'kotlin', 'swift', 'scala', 'haskell'
+    ]
+    
+    negative_keywords = [
+        'comic', 'manga', 'graphic novel', 'cartoon', 'avatar', 'airbender', 'fiction', 'novel', 
+        'fantasy', 'romance', 'thriller', 'mystery', 'poetry', 'self-help', 'habits', 'parenting', 
+        'health', 'diet', 'recipe', 'cookbook', 'spiritual', 'religion', 'yoga', 'meditation', 
+        'biography', 'autobiography', 'history', 'politics', 'economics', 'finance', 'investing', 
+        'marketing', 'children\'s book', 'picture book', 'dressed book'
+    ]
+    
+    strong_exclusions = [
+        'avatar', 'airbender', 'legend of aang', 'legend of korra', 'archie #', 'archie comics', 
+        'last airbender', 'dressed book'
+    ]
+    
+    def is_relevant(row):
+        title = str(row.get('title', '')).lower()
+        raw_title = str(row.get('raw_title', '')).lower()
+        genres = str(row.get('genres', '')).lower()
+        description = str(row.get('description', '')).lower()
+        
+        # 1. Check strong exclusions in title
+        for exc in strong_exclusions:
+            if exc in title or exc in raw_title:
+                return False
+                
+        # 2. Check if it's a comic/manga/cartoon (unless it has strong coding terms)
+        is_comic = any(x in genres or x in title for x in ['comic', 'manga', 'graphic novel', 'cartoon', 'anime'])
+        if is_comic:
+            strong_programming_kw = ['programming', 'programmer', 'python', 'javascript', 'java', 'sql', 'database', 'code', 'coding', 'algorithms']
+            if not any(kw in title or kw in genres for kw in strong_programming_kw):
+                return False
+                
+        # 3. Calculate positive score
+        pos_score = 0
+        for kw in positive_keywords:
+            if len(kw) <= 3:
+                pattern = r'\b' + re.escape(kw) + r'\b'
+                if re.search(pattern, title) or re.search(pattern, raw_title):
+                    pos_score += 3
+                if re.search(pattern, genres):
+                    pos_score += 2
+                if re.search(pattern, description):
+                    pos_score += 1
+            else:
+                if kw in title or kw in raw_title:
+                    pos_score += 3
+                if kw in genres:
+                    pos_score += 2
+                if kw in description:
+                    pos_score += 1
+                    
+        # 4. Calculate negative score
+        neg_score = 0
+        for kw in negative_keywords:
+            if kw in title or kw in raw_title or kw in genres or kw in description:
+                neg_score += 2
+                
+        # 5. Threshold check
+        return pos_score >= 3 and pos_score > neg_score
+
+    pre_filter_len = len(df_combined)
+    df_combined = df_combined[df_combined.apply(is_relevant, axis=1)]
+    post_filter_len = len(df_combined)
+    print(f"Relevance Filter: Kept {post_filter_len} out of {pre_filter_len} books (Removed {pre_filter_len - post_filter_len} irrelevant books).")
+
+
     df_combined['avg_rating'] = pd.to_numeric(df_combined['avg_rating'], errors='coerce').fillna(0.0).round(2)
     df_combined['ratings_count'] = pd.to_numeric(df_combined['ratings_count'], errors='coerce').fillna(0).astype(int)
     

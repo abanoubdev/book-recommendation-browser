@@ -264,7 +264,7 @@ def display_book_grid(books_list):
                     st.markdown(card_html, unsafe_allow_html=True)
 
 # tab1, tab2 = st.tabs(["Beginner Learning Paths", "Similar Book Finder"])
-tab2 = st.text(["Similar Book Finder"])
+tab2 = st.text("Similar Book Finder")
 st.markdown("### Find Similar Books")
 book_options = df['title'].unique()
 
