@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+
 def clean_data():
     
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
