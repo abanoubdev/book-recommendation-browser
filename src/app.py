@@ -14,8 +14,7 @@ from model import (
 )
 
 st.set_page_config(
-    page_title="Goodreads Book Recommender",
-    page_icon="📚",
+    page_title="Good Reads Book Recommender",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -160,12 +159,10 @@ else:
     st.title("Ironhack Book Recommender")
     st.subheader("Smart Programming Book Recommendations")
 
-# Train the model automatically on first launch if dataset or model is missing
 if not os.path.exists(CLUSTERED_DATA_PATH) or not os.path.exists(MODEL_FILEPATH):
     with st.spinner("Building and training recommender model..."):
         build_and_train_model()
 
-# Sidebar Configuration
 st.sidebar.markdown("## ⚙️ Filters & Settings")
 st.sidebar.markdown("Adjust parameters to find your perfect books.")
 
@@ -255,12 +252,12 @@ def display_book_grid(books_list):
                         <div style="margin-bottom: 8px;">
                             <span class="rating-badge">⭐ {rating:.2f}</span>
                         </div>
+                        <div class="genre-container">
+                            {genre_pills}
+                        </div>
                         <div class="book-meta">
                             📄 <b>Pages:</b> {int(pages)} <br>
                             👥 <b>Reviews:</b> {int(reviews):,}
-                        </div>
-                        <div class="genre-container">
-                            {genre_pills}
                         </div>
                     </div>
                     """
@@ -269,8 +266,7 @@ def display_book_grid(books_list):
 tab1, tab2 = st.tabs(["Beginner Learning Paths", "Similar Book Finder"])
 
 with tab1:
-    st.markdown("### 🗺️ Pick a Coding Track to Start Programming")
-    st.markdown("We've grouped the books into logical clusters using unsupervised machine learning (PCA + K-Means). Pick a track to see the highest-rated recommendations.")
+    st.markdown("### Pick a Coding Track to Start Programming")
 
     path_options = {
         "Software Engineering & Clean Architecture": 0,
@@ -292,10 +288,8 @@ with tab1:
     display_book_grid(filtered_recs)
 
 with tab2:
-    st.markdown("### 🔍 Find Similar Books")
-    st.markdown("Select a book you already know or enjoy, and we'll use PCA-reduced feature similarity to recommend books in the same cluster.")
-
-    book_options = sorted(df['title'].unique())
+    st.markdown("### Find Similar Books")
+    book_options = df['title'].unique()
 
     selected_book = st.selectbox(
         "Select a book you like:",
