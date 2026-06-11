@@ -264,7 +264,23 @@ def display_book_grid(books_list):
                     st.markdown(card_html, unsafe_allow_html=True)
 
 # tab1, tab2 = st.tabs(["Beginner Learning Paths", "Similar Book Finder"])
-tab2 = st.tabs(["Similar Book Finder"])
+tab2 = st.text(["Similar Book Finder"])
+st.markdown("### Find Similar Books")
+book_options = df['title'].unique()
+
+selected_book = st.selectbox(
+    "Select a book you like:",
+    options=book_options,
+    index=None,
+    placeholder="Type to search for a book..."
+)
+
+if selected_book:
+    raw_recs = get_recommendations(selected_book, num_recommendations=25)
+    filtered_recs = apply_filters(raw_recs)[:num_recommendations]
+
+    st.markdown(f"#### 📚 If you liked **{selected_book}**, check these out:")
+    display_book_grid(filtered_recs)
 
 # with tab1:
 #     st.markdown("### Pick a Coding Track to Start Programming")
@@ -288,20 +304,20 @@ tab2 = st.tabs(["Similar Book Finder"])
 #     st.markdown(f"#### Top Recommendations for **{selected_path}**")
 #     display_book_grid(filtered_recs)
 
-with tab2:
-    st.markdown("### Find Similar Books")
-    book_options = df['title'].unique()
+# with tab2:
+#     st.markdown("### Find Similar Books")
+#     book_options = df['title'].unique()
 
-    selected_book = st.selectbox(
-        "Select a book you like:",
-        options=book_options,
-        index=None,
-        placeholder="Type to search for a book..."
-    )
+#     selected_book = st.selectbox(
+#         "Select a book you like:",
+#         options=book_options,
+#         index=None,
+#         placeholder="Type to search for a book..."
+#     )
 
-    if selected_book:
-        raw_recs = get_recommendations(selected_book, num_recommendations=25)
-        filtered_recs = apply_filters(raw_recs)[:num_recommendations]
+#     if selected_book:
+#         raw_recs = get_recommendations(selected_book, num_recommendations=25)
+#         filtered_recs = apply_filters(raw_recs)[:num_recommendations]
 
-        st.markdown(f"#### 📚 If you liked **{selected_book}**, check these out:")
-        display_book_grid(filtered_recs)
+#         st.markdown(f"#### 📚 If you liked **{selected_book}**, check these out:")
+#         display_book_grid(filtered_recs)
