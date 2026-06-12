@@ -157,7 +157,7 @@ if os.path.exists(BANNER_PATH):
     st.image(BANNER_PATH, use_container_width=True)
 else:
     st.title("Ironhack Book Recommender")
-    st.subheader("Smart Programming Book Recommendations")
+    st.subheader("Smart Software Programming Book Recommendations")
 
 if not os.path.exists(CLUSTERED_DATA_PATH) or not os.path.exists(MODEL_FILEPATH):
     with st.spinner("Building and training recommender model..."):
@@ -269,7 +269,7 @@ st.markdown("### Find Similar Books")
 book_options = df['title'].unique()
 
 selected_book = st.selectbox(
-    "Select a book you like:",
+    "Select a book you read:",
     options=book_options,
     index=None,
     placeholder="Type to search for a book..."
